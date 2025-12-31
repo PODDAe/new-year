@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DTZ 2026 Experience</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700;900&family=Orbitron:wght@400;700;900&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body, html {
+            height: 100vh;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            color: white;
+            text-align: center;
+            background: #000;
+        }
+
+        /* Enhanced Background Layer */
+        #bg-image {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            transition: background-image 2.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            z-index: -1;
+            /* Default 2025 Year End Image with multiple layers */
+            background-image: 
+                linear-gradient(rgba(0, 10, 20, 0.7), rgba(0, 20, 40, 0.8)),
+                radial-gradient(circle at 20% 50%, rgba(0, 212, 255, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(37, 211, 102, 0.1) 0%, transparent 50%),
+                url('https://images.unsplash.com/photo-1467810563316-b5476525c0f9?q=80&w=2069&auto=format&fit=crop');
+        }
+
+        /* Particle Effect */
+        #particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Overlay for Click-to-Start */
+        #overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at center, rgba(0, 20, 40, 0.95) 0%, rgba(0, 0, 0, 0.98) 100%);
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: opacity 1s ease-out;
+        }
+
+        #enter-btn {
+            border: 3px solid #00d4ff;
+            padding: 20px 50px;
+            border-radius: 50px;
+            color: #00d4ff;
+            font-weight: 900;
+            letter-spacing: 4px;
+            font-size: 1.2rem;
+            text-transform: uppercase;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            background: rgba(0, 212, 255, 0.05);
+            backdrop-filter: blur(5px);
+            box-shadow: 0 0 0 1px rgba(0, 212, 255, 0.2);
+        }
+
+        #enter-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 212, 255, 0.2), transparent);
+            transition: left 0.7s ease;
+        }
+
+        #enter-btn:hover {
+            background: rgba(0, 212, 255, 0.15);
+            color: #ffffff;
+            box-shadow: 0 0 30px #00d4ff, 0 0 60px rgba(0, 212, 255, 0.3);
+            transform: translateY(-5px);
+        }
+
+        #enter-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Main Content Container */
+        .container {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        #title {
+            font-weight: 300;
+            letter-spacing: 10px;
+            color: #00d4ff;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        #title::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00d4ff, transparent);
+        }
+
+        #timer {
+            font-family: 'Orbitron', monospace;
+            font-size: clamp(3rem, 18vw, 8rem);
+            font-weight: 900;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.9);
+            margin: 20px 0;
+            background: linear-gradient(45deg, #00d4ff, #ffffff, #00ff88);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: timerGlow 3s ease-in-out infinite alternate;
+            letter-spacing: 5px;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        /* 2026 Wish Section */
+        #wish-container {
+            display: none;
+            animation: celebrateIn 1.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 900px;
+            padding: 40px;
+            background: rgba(0, 10, 20, 0.6);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 212, 255, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        #wish-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 212, 255, 0.1) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        #wish-header {
+            font-size: clamp(2.5rem, 10vw, 5.5rem);
+            font-weight: 900;
+            background: linear-gradient(45deg, #00d4ff, #00ff88, #ffd700, #ff0080);
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shine 4s linear infinite;
+            line-height: 1.2;
+            margin-bottom: 30px;
+            text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .bot-msg {
+            font-size: clamp(1rem, 4vw, 1.6rem);
+            margin-top: 20px;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            line-height: 1.6;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .whatsapp-highlight {
+            display: inline-block;
+            margin-top: 25px;
+            font-weight: 900;
+            color: #25D366;
+            text-shadow: 0 0 20px rgba(37, 211, 102, 0.8);
+            animation: pulse 2s infinite, float 3s ease-in-out infinite;
+            background: rgba(37, 211, 102, 0.1);
+            padding: 15px 30px;
+            border-radius: 50px;
+            border: 2px solid rgba(37, 211, 102, 0.3);
+            letter-spacing: 2px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .whatsapp-highlight::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(37, 211, 102, 0.2), transparent);
+            animation: slide 3s infinite;
+        }
+
+        .branding {
+            position: absolute;
+            bottom: 30px;
+            font-size: 0.8rem;
+            letter-spacing: 4px;
+            color: rgba(255,255,255,0.6);
+            text-transform: uppercase;
+            z-index: 10;
+        }
+
+        .branding b { 
+            color: #00d4ff; 
+            font-weight: 700;
+            text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+        }
+
+        /* Confetti Effect */
+        .confetti {
+            position: fixed;
+            width: 15px;
+            height: 15px;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        /* Animations */
+        @keyframes shine { 
+            0% { background-position: 0% center; }
+            100% { background-position: 200% center; } 
+        }
+        
+        @keyframes pulse { 
+            0%, 100% { transform: scale(1); box-shadow: 0 0 20px rgba(37, 211, 102, 0.8); }
+            50% { transform: scale(1.05); box-shadow: 0 0 40px rgba(37, 211, 102, 1); } 
+        }
+        
+        @keyframes celebrateIn { 
+            from { opacity: 0; transform: translateY(50px) scale(0.9); }
+            to { opacity: 1; transform: translateY(0) scale(1); } 
+        }
+        
+        @keyframes timerGlow {
+            0% { background-position: 0% center; filter: brightness(1); }
+            100% { background-position: 200% center; filter: brightness(1.2); }
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        @keyframes slide {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            #timer {
+                font-size: clamp(2.5rem, 12vw, 5rem);
+                letter-spacing: 2px;
+            }
+            
+            #enter-btn {
+                padding: 15px 30px;
+                font-size: 1rem;
+                letter-spacing: 3px;
+            }
+            
+            #wish-container {
+                padding: 20px;
+                margin: 0 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="bg-image"></div>
+    <div id="particles"></div>
+
+    <div id="overlay" onclick="startExperience()">
+        <div id="enter-btn">ENTER DTZ EXPERIENCE</div>
+    </div>
+
+    <div class="container">
+        <h2 id="title">2025 Year End Countdown</h2>
+        <div id="timer">00:00:00:00</div>
+
+        <div id="wish-container">
+            <div id="wish-header">WELCOME TO<br><span style="font-size: 1.2em;">NEW 2026</span></div>
+            <div class="bot-msg">
+                A new beginning with endless possibilities.<br>
+                Come with us into a brighter future! Happy New Year.<br>
+                <span class="whatsapp-highlight">NEW WHATSAPP BOTS ARE AVAILABLE</span>
+            </div>
+        </div>
+        
+        <div class="branding">
+            MADE BY <b>DTZ DULA</b> | <b>DTZ TEAM</b> | 2026
+        </div>
+    </div>
+
+    <audio id="audio1" src="https://files.catbox.moe/ohbxno.mp3"></audio>
+    <audio id="audio2" src="https://files.catbox.moe/qzpwzj.mp3"></audio>
+
+    <script>
+        const audio1 = document.getElementById('audio1');
+        const audio2 = document.getElementById('audio2');
+        const bg = document.getElementById('bg-image');
+        const particlesContainer = document.getElementById('particles');
+        let confettiInterval;
+        let particles = [];
+
+        function startExperience() {
+            document.getElementById('overlay').style.opacity = '0';
+            setTimeout(() => {
+                document.getElementById('overlay').style.display = 'none';
+            }, 1000);
+            
+            audio1.play();
+            createParticles();
+        }
+
+        audio1.onended = () => { 
+            audio2.play(); 
+            audio2.loop = true; 
+            audio2.volume = 0.7;
+        };
+
+        function updateCountdown() {
+            const now = new Date();
+            const targetDate = new Date(`January 1, 2026 00:00:00`);
+            const diff = targetDate - now;
+
+            if (diff <= 0) {
+                // Change UI for 2026
+                document.getElementById('timer').style.display = 'none';
+                document.getElementById('title').style.display = 'none';
+                document.getElementById('wish-container').style.display = 'block';
+                
+                // Switch to 2026 Background (Fireworks)
+                bg.style.backgroundImage = 
+                    "linear-gradient(rgba(0, 10, 20, 0.6), rgba(0, 20, 40, 0.7)), " +
+                    "radial-gradient(circle at 30% 50%, rgba(255, 215, 0, 0.2) 0%, transparent 50%), " +
+                    "radial-gradient(circle at 70% 30%, rgba(255, 0, 128, 0.15) 0%, transparent 50%), " +
+                    "url('https://images.unsplash.com/photo-1533420225124-73dcf2162ca6?q=80&w=2070&auto=format&fit=crop')";
+                
+                // Trigger confetti effect
+                startConfetti();
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            const minutes = Math.floor((diff / 1000 / 60) % 60);
+            const seconds = Math.floor((diff / 1000) % 60);
+
+            document.getElementById('timer').innerText = 
+                `${days.toString().padStart(2, '0')}:${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function createParticles() {
+            // Create floating particles for background effect
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.classList.add('confetti');
+                particle.style.position = 'fixed';
+                particle.style.width = Math.random() * 5 + 3 + 'px';
+                particle.style.height = particle.style.width;
+                particle.style.backgroundColor = getRandomColor();
+                particle.style.borderRadius = '50%';
+                particle.style.left = Math.random() * 100 + 'vw';
+                particle.style.top = Math.random() * 100 + 'vh';
+                particle.style.opacity = '0.7';
+                particle.style.boxShadow = '0 0 10px currentColor';
+                
+                particlesContainer.appendChild(particle);
+                particles.push({
+                    element: particle,
+                    x: parseFloat(particle.style.left),
+                    y: parseFloat(particle.style.top),
+                    speedX: (Math.random() - 0.5) * 0.5,
+                    speedY: (Math.random() - 0.5) * 0.5,
+                    radius: parseFloat(particle.style.width)
+                });
+            }
+            
+            // Animate particles
+            animateParticles();
+        }
+
+        function animateParticles() {
+            particles.forEach(p => {
+                p.x += p.speedX;
+                p.y += p.speedY;
+                
+                // Bounce off edges
+                if (p.x <= 0 || p.x >= 100) p.speedX *= -1;
+                if (p.y <= 0 || p.y >= 100) p.speedY *= -1;
+                
+                p.element.style.left = p.x + 'vw';
+                p.element.style.top = p.y + 'vh';
+            });
+            
+            requestAnimationFrame(animateParticles);
+        }
+
+        function getRandomColor() {
+            const colors = ['#00d4ff', '#00ff88', '#ffd700', '#ff0080', '#25D366'];
+            return colors[Math.floor(Math.random() * colors.length)];
+        }
+
+        function startConfetti() {
+            // Clear any existing confetti
+            clearInterval(confettiInterval);
+            
+            // Create confetti elements
+            for (let i = 0; i < 150; i++) {
+                const confetti = document.createElement('div');
+                confetti.className = 'confetti';
+                confetti.style.left = Math.random() * 100 + 'vw';
+                confetti.style.backgroundColor = getRandomColor();
+                confetti.style.width = Math.random() * 10 + 5 + 'px';
+                confetti.style.height = Math.random() * 10 + 5 + 'px';
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confetti.style.opacity = '0';
+                
+                document.body.appendChild(confetti);
+                
+                // Animate confetti falling
+                const animation = confetti.animate([
+                    { 
+                        opacity: 1, 
+                        transform: `translateY(-100vh) rotate(0deg)`,
+                        top: '0px'
+                    },
+                    { 
+                        opacity: 0.8,
+                        transform: `translateY(${Math.random() * 50 + 50}vh) rotate(${Math.random() * 720}deg)`,
+                        top: `${Math.random() * 100 + 100}vh`
+                    }
+                ], {
+                    duration: Math.random() * 3000 + 2000,
+                    easing: 'cubic-bezier(0.215, 0.61, 0.355, 1)'
+                });
+                
+                // Remove confetti after animation
+                animation.onfinish = () => {
+                    confetti.remove();
+                };
+            }
+            
+            // Continue confetti for 10 seconds
+            confettiInterval = setInterval(() => {
+                if (Math.random() > 0.7) {
+                    startConfetti();
+                }
+            }, 300);
+            
+            // Stop confetti after 10 seconds
+            setTimeout(() => {
+                clearInterval(confettiInterval);
+            }, 10000);
+        }
+
+        // Initialize countdown
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+        
+        // Preload images for smoother transitions
+        const preloadImages = () => {
+            const img1 = new Image();
+            img1.src = 'https://images.unsplash.com/photo-1467810563316-b5476525c0f9?q=80&w=2069&auto=format&fit=crop';
+            
+            const img2 = new Image();
+            img2.src = 'https://images.unsplash.com/photo-1533420225124-73dcf2162ca6?q=80&w=2070&auto=format&fit=crop';
+        };
+        
+        window.addEventListener('load', preloadImages);
+    </script>
+</body>
+</html>
